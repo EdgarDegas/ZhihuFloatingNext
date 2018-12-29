@@ -49,19 +49,27 @@ class ViewController: UIViewController {
     
     private func handlePanChange(_ recognizer: UIPanGestureRecognizer) {
         let translation = recognizer.translation(in: view)
-        
         self.floatingView.frame.origin.x = translation.x + self.floatingViewOriginalOrigin.x
         self.floatingView.frame.origin.y = translation.y + self.floatingViewOriginalOrigin.y
     }
     
     private func handlePanEnd(_ recognizer: UIPanGestureRecognizer) {
         let velocity = recognizer.velocity(in: view)
+        
+        let rangedVelocity = CGPoint(
+            x: min (800.0, max (-800.0, velocity.x) ),
+            y: min (800.0, max (-800.0, velocity.y) )
+        )
+        
         let floatingBounds = view.safeBounds.inset(by: UIEdgeInsets(
             top: Storyboard.verticalPadding,
             left: Storyboard.horizontalPadding,
             bottom: Storyboard.verticalPadding,
             right: Storyboard.horizontalPadding))
-        floatingViewDecelerationAnimator = animateDecelerate(floatingView: floatingView, insideOf: floatingBounds, with: velocity)
+        floatingViewDecelerationAnimator = animateDecelerate(
+            floatingView: floatingView,
+            insideOf: floatingBounds,
+            with: rangedVelocity)
         floatingViewDecelerationAnimator?.startAnimation()
     }
 }
@@ -129,8 +137,9 @@ extension ViewController {
     
     private func layout(floatingView: UIView) {
         floatingView.layer.cornerRadius = floatingView.frame.height / 2
-        floatingView.layer.shadowOpacity = 0.08
-        floatingView.layer.shadowOffset = CGSize(width: 0, height: 2)
+        floatingView.layer.shadowOpacity = 0.1
+        floatingView.layer.shadowOffset = CGSize(width: 2, height: 2)
+        floatingView.layer.shadowPath = UIBezierPath(ovalIn: floatingView.layer.bounds.insetBy(dx: 2, dy: 2)).cgPath
         floatingView.layer.shadowRadius = 6
     }
 }
