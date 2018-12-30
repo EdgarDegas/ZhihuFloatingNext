@@ -8,16 +8,22 @@
 
 import UIKit
 
+// MARK: - Controller related
+
 class ViewController: UIViewController {
 
-    @IBOutlet weak var floatingView: UIView!
-    private var floatingViewOriginalOrigin: CGPoint!
-    private var floatingViewDecelerationAnimator: UIViewPropertyAnimator?
+    // MARK: Variables
     
     private enum Storyboard {
         static let horizontalPadding: CGFloat = 42
         static let verticalPadding  : CGFloat = 120
     }
+    
+    @IBOutlet weak var floatingView: UIView!
+    private var floatingViewOriginalOrigin: CGPoint!
+    private var floatingViewDecelerationAnimator: UIViewPropertyAnimator?
+    
+    // MARK: Life cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,6 +33,8 @@ class ViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         layout(floatingView: floatingView)
     }
+    
+    // MARK: Gesture related
     
     private func addPanRecognizer(for floatingView: UIView) {
         let panRecognizer = UIPanGestureRecognizer(target: self, action: #selector(panRecognized(_:)))
@@ -93,12 +101,12 @@ extension ViewController {
     ///
     /// - Returns: A UIViewPropertyAnimator instance ready to start.
     private func animateDecelerate(floatingView: UIView, insideOf theBounds: CGRect, with velocity: CGPoint) -> UIViewPropertyAnimator {
-
         
         let decelerationRate = UIScrollView.DecelerationRate.normal.rawValue
-        
+
         let x = floatingView.frame.origin.x; let y = floatingView.frame.origin.y
         
+        // The ideal destination according to velocity and the deceleration rate.
         let projection = (
             x: x + (velocity.x / 1000.0) * decelerationRate / (1.0 - decelerationRate),
             y: y + (velocity.y / 1000.0) * decelerationRate / (1.0 - decelerationRate)
@@ -143,6 +151,9 @@ extension ViewController {
         floatingView.layer.shadowRadius = 6
     }
 }
+
+
+// MARK: - Extensions
 
 extension UIView {
     var safeBounds: CGRect {
